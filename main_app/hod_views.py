@@ -13,6 +13,7 @@ from django.shortcuts import (
 from django.templatetags.static import static
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
 from django.views.generic import UpdateView
 
 from .forms import *
@@ -629,7 +630,11 @@ def admin_view_profile(request):
     context = {
         "form": form,
         "page_title": "View/Edit Profile",
-        "current_profile_pic": getattr(admin.admin.profile_pic, "url", "") if getattr(admin.admin, "profile_pic", None) else "",
+        "current_profile_pic": (
+            getattr(admin.admin.profile_pic, "url", "")
+            if getattr(admin.admin, "profile_pic", None)
+            else ""
+        ),
     }
     if request.method == "POST":
         try:
@@ -684,7 +689,7 @@ def send_student_notification(request):
             "to": student.admin.fcm_token,
         }
         headers = {
-            "Authorization": "key=REDACTED_FCM_SERVER_KEY",
+            "Authorization": f"key={getattr(settings, 'FCM_SERVER_KEY', '')}",
             "Content-Type": "application/json",
         }
         data = requests.post(url, data=json.dumps(body), headers=headers)
@@ -712,7 +717,7 @@ def send_staff_notification(request):
             "to": staff.admin.fcm_token,
         }
         headers = {
-            "Authorization": "key=REDACTED_FCM_SERVER_KEY",
+            "Authorization": f"key={getattr(settings, 'FCM_SERVER_KEY', '')}",
             "Content-Type": "application/json",
         }
         data = requests.post(url, data=json.dumps(body), headers=headers)

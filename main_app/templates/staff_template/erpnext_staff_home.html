@@ -304,14 +304,14 @@
 <script>
     // Firebase configuration
     var firebaseConfig = {
-        apiKey: "REDACTED_FIREBASE_API_KEY",
+        apiKey: "{{ FIREBASE_CONFIG.apiKey|escapejs }}",
         authDomain: "sms-with-django.firebaseapp.com",
-        databaseURL: "https://sms-with-django.firebaseio.com",
-        projectId: "sms-with-django",
-        storageBucket: "sms-with-django.appspot.com",
-        messagingSenderId: "945324593139",
-        appId: "1:945324593139:web:03fa99a8854bbd38420c86",
-        measurementId: "G-2F2RXTL9GT"
+        databaseURL: "{{ FIREBASE_CONFIG.databaseURL|escapejs }}",
+        projectId: "{{ FIREBASE_CONFIG.projectId|escapejs }}",
+        storageBucket: "{{ FIREBASE_CONFIG.storageBucket|escapejs }}",
+        messagingSenderId: "{{ FIREBASE_CONFIG.messagingSenderId|escapejs }}",
+        appId: "{{ FIREBASE_CONFIG.appId|escapejs }}",
+        measurementId: "{{ FIREBASE_CONFIG.measurementId|escapejs }}"
     };
     
     // Initialize Firebase

@@ -1,0 +1,30 @@
+{% extends 'main_app/base.html' %}
+{% block page_title %}{{ page_title }}{% endblock %}
+{% block breadcrumb %}<li class="breadcrumb-item active">{{ page_title }}</li>{% endblock %}
+{% block content %}
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-white"><h5 class="mb-0">{{ page_title }}</h5></div>
+    <div class="card-body">
+        <form method="get" class="row g-2 mb-3" data-testid="store-search-form">
+            <div class="col-md-9"><input class="form-control" name="q" value="{{ q }}" placeholder="Search by item name, category, or location" data-testid="input-store-search"></div>
+            <div class="col-md-3"><button class="btn btn-primary w-100" type="submit" data-testid="btn-store-search">Search</button></div>
+        </form>
+        {% if q %}
+            <p class="text-muted">Found {{ results|length }} result(s) for "<strong>{{ q }}</strong>"</p>
+            <div class="table-responsive">
+                <table class="table table-sm align-middle" data-testid="store-search-results">
+                    <thead class="table-dark"><tr><th>#</th><th>Name</th><th>Category</th><th>Quantity</th><th>Unit</th><th>Location</th><th>Status</th></tr></thead>
+                    <tbody>
+                    {% for i in results %}
+                    <tr><td>{{ forloop.counter }}</td><td>{{ i.name }}</td><td>{{ i.category }}</td><td>{{ i.quantity }}</td><td>{{ i.unit }}</td><td>{{ i.location|default:'-' }}</td>
+                    <td>{% if i.is_low_stock %}<span class="badge bg-danger">Low</span>{% else %}<span class="badge bg-success">OK</span>{% endif %}</td></tr>
+                    {% empty %}<tr><td colspan="7" class="text-center text-muted">No matching items.</td></tr>{% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-muted">Type a search term above and press Search.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

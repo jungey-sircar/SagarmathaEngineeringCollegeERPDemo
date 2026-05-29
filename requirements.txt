@@ -1,0 +1,14 @@
+Django
+mysql-connector
+virtualenv
+dj-database-url
+gunicorn
+whitenoise
+Pillow
+requests
+beautifulsoup4
+psycopg2-binary
+djangorestframework
+djangorestframework-simplejwt
+django-cors-headers
+reportlab==4.5.1

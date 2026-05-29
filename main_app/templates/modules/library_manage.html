@@ -1,0 +1,103 @@
+{% extends 'main_app/base.html' %}
+{% block page_title %}{{ page_title }}{% endblock %}
+{% block breadcrumb %}<li class="breadcrumb-item active">Library Management</li>{% endblock %}
+{% block content %}
+<ul class="nav nav-tabs mb-3" id="libTab" role="tablist">
+    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#books" type="button" data-testid="tab-books">Books</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#issue" type="button" data-testid="tab-issue">Issue Book</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#loans" type="button" data-testid="tab-loans">Active Loans ({{ loans|length }})</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#history" type="button" data-testid="tab-history">Returned History</button></li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade show active" id="books">
+        <div class="card shadow-sm border-0 mb-3">
+            <div class="card-header bg-white"><h5 class="mb-0">Add / Update Book</h5></div>
+            <div class="card-body">
+                <form method="post" class="row g-3" data-testid="book-form">
+                    {% csrf_token %}<input type="hidden" name="action" value="add_book">
+                    <div class="col-md-3"><input type="number" class="form-control" name="isbn" placeholder="ISBN (13-digit)" required></div>
+                    <div class="col-md-4"><input class="form-control" name="name" placeholder="Title" required></div>
+                    <div class="col-md-3"><input class="form-control" name="author" placeholder="Author" required></div>
+                    <div class="col-md-2"><input class="form-control" name="category" placeholder="Category"></div>
+                    <div class="col-12"><button class="btn btn-primary" type="submit" data-testid="btn-add-book">Save Book</button></div>
+                </form>
+            </div>
+        </div>
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white"><h5 class="mb-0">Catalog</h5></div>
+            <div class="card-body">
+                <table class="table table-sm align-middle" data-testid="books-table">
+                    <thead class="table-dark"><tr><th>#</th><th>ISBN</th><th>Title</th><th>Author</th><th>Category</th><th>Action</th></tr></thead>
+                    <tbody>
+                    {% for b in books %}
+                    <tr><td>{{ forloop.counter }}</td><td>{{ b.isbn }}</td><td>{{ b.name }}</td><td>{{ b.author }}</td><td>{{ b.category }}</td>
+                    <td><form method="post" class="d-inline">{% csrf_token %}<input type="hidden" name="action" value="delete_book"><input type="hidden" name="id" value="{{ b.id }}">
+                        <button type="submit" class="btn btn-sm btn-outline-danger" data-testid="btn-del-book-{{ b.id }}">Delete</button></form></td></tr>
+                    {% empty %}<tr><td colspan="6" class="text-center text-muted">No books yet.</td></tr>{% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="issue">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white"><h5 class="mb-0">Issue Book to Borrower</h5></div>
+            <div class="card-body">
+                <form method="post" class="row g-3" data-testid="issue-form">
+                    {% csrf_token %}<input type="hidden" name="action" value="issue_book">
+                    <div class="col-md-5"><label class="form-label">Book</label>
+                        <select class="form-select" name="book_id" required>
+                            <option value="">-- Select book --</option>
+                            {% for b in books %}<option value="{{ b.id }}">{{ b.name }} (ISBN {{ b.isbn }})</option>{% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4"><label class="form-label">Borrower</label>
+                        <select class="form-select" name="borrower_id" required>
+                            <option value="">-- Select user --</option>
+                            {% for u in borrowers %}<option value="{{ u.id }}">{{ u.first_name }} {{ u.last_name }} - {{ u.email }}</option>{% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3"><label class="form-label">Due On</label><input type="date" class="form-control" name="due_on"></div>
+                    <div class="col-12"><button class="btn btn-primary" type="submit" data-testid="btn-issue-book">Issue Book</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="loans">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white"><h5 class="mb-0">Active Loans</h5></div>
+            <div class="card-body">
+                <table class="table table-sm align-middle" data-testid="loans-table">
+                    <thead class="table-dark"><tr><th>#</th><th>Book</th><th>Borrower</th><th>Issued</th><th>Due</th><th>Action</th></tr></thead>
+                    <tbody>
+                    {% for l in loans %}
+                    <tr><td>{{ forloop.counter }}</td><td>{{ l.book.name }}</td><td>{{ l.borrower.email }}</td><td>{{ l.issued_on }}</td><td>{{ l.due_on }}</td>
+                    <td><form method="post" class="d-inline">{% csrf_token %}<input type="hidden" name="action" value="return_book"><input type="hidden" name="loan_id" value="{{ l.id }}">
+                        <button class="btn btn-sm btn-success" type="submit" data-testid="btn-return-{{ l.id }}">Mark Returned</button></form></td></tr>
+                    {% empty %}<tr><td colspan="6" class="text-center text-muted">No active loans.</td></tr>{% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="history">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white"><h5 class="mb-0">Recently Returned</h5></div>
+            <div class="card-body">
+                <table class="table table-sm align-middle">
+                    <thead class="table-dark"><tr><th>#</th><th>Book</th><th>Borrower</th><th>Issued</th><th>Returned</th></tr></thead>
+                    <tbody>
+                    {% for l in past_loans %}
+                    <tr><td>{{ forloop.counter }}</td><td>{{ l.book.name }}</td><td>{{ l.borrower.email }}</td><td>{{ l.issued_on }}</td><td>{{ l.returned_on }}</td></tr>
+                    {% empty %}<tr><td colspan="5" class="text-center text-muted">No returns yet.</td></tr>{% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

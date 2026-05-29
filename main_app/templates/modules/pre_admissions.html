@@ -1,0 +1,111 @@
+{% extends 'main_app/base.html' %}
+{% load static %}
+{% block page_title %}Pre Admissions{% endblock page_title %}
+{% block breadcrumb %}<li class="breadcrumb-item active">Pre Admissions</li>{% endblock breadcrumb %}
+
+{% block content %}
+<div class="row g-3 mb-3">
+    <div class="col-lg-3 col-md-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-uppercase small fw-semibold text-muted">Total Inquiries</div>
+                <h2 class="mb-0 mt-2" data-testid="pre-admissions-total">{{ inquiries|length }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-uppercase small fw-semibold text-muted">Pending</div>
+                <h2 class="mb-0 mt-2 text-warning" data-testid="pre-admissions-pending">{{ pending_count }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-uppercase small fw-semibold text-muted">Approved</div>
+                <h2 class="mb-0 mt-2 text-success" data-testid="pre-admissions-approved">{{ approved_count }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-uppercase small fw-semibold text-muted">Rejected</div>
+                <h2 class="mb-0 mt-2 text-danger" data-testid="pre-admissions-rejected">{{ rejected_count }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0 mb-3">
+    <div class="card-header bg-white"><h5 class="mb-0">Add New Inquiry</h5></div>
+    <div class="card-body">
+        <form method="post" class="row g-3" data-testid="pre-admissions-form">
+            {% csrf_token %}
+            <div class="col-md-4"><input class="form-control" name="candidate_name" placeholder="Candidate Name" required data-testid="input-candidate-name"></div>
+            <div class="col-md-3"><input type="email" class="form-control" name="email" placeholder="Email" required data-testid="input-email"></div>
+            <div class="col-md-2"><input class="form-control" name="phone" placeholder="Phone" data-testid="input-phone"></div>
+            <div class="col-md-2">
+                <select class="form-select" name="course" data-testid="select-course">
+                    <option value="">-- Course --</option>
+                    {% for c in courses %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}
+                </select>
+            </div>
+            <div class="col-md-1">
+                <select class="form-select" name="status" data-testid="select-status">
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="rejected">Rejected</option>
+                </select>
+            </div>
+            <div class="col-12"><textarea class="form-control" name="notes" placeholder="Notes (optional)" rows="2" data-testid="input-notes"></textarea></div>
+            <div class="col-12"><button class="btn btn-primary" type="submit" data-testid="btn-add-inquiry">Add Inquiry</button></div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-white"><h5 class="mb-0">Inquiry Pipeline</h5></div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-sm table-bordered align-middle" data-testid="pre-admissions-table">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>Course</th>
+                        <th>Status</th><th>Applied</th><th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for row in inquiries %}
+                    <tr data-testid="inquiry-row-{{ row.id }}">
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ row.candidate_name }}</td>
+                        <td>{{ row.email }}</td>
+                        <td>{{ row.phone|default:'-' }}</td>
+                        <td>{{ row.course.name|default:'-' }}</td>
+                        <td>
+                            {% if row.status == 'approved' %}<span class="badge bg-success">Approved</span>
+                            {% elif row.status == 'rejected' %}<span class="badge bg-danger">Rejected</span>
+                            {% else %}<span class="badge bg-warning text-dark">Pending</span>{% endif %}
+                        </td>
+                        <td>{{ row.applied_at }}</td>
+                        <td>
+                            <form method="post" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="id" value="{{ row.id }}">
+                                <button name="action" value="promote" class="btn btn-sm btn-outline-success" data-testid="btn-promote-{{ row.id }}">Promote</button>
+                                <button name="action" value="delete" class="btn btn-sm btn-outline-danger" data-testid="btn-delete-{{ row.id }}">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="8" class="text-center text-muted">No inquiries yet. Use the form above to add one.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}

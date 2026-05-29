@@ -1,0 +1,64 @@
+{% extends 'main_app/base.html' %}
+{% load static %}
+{% block page_title %}Payslip{% endblock page_title %}
+{% block breadcrumb %}<li class="breadcrumb-item active">Payslip</li>{% endblock breadcrumb %}
+
+{% block content %}
+<div class="card shadow-sm border-0 mb-3">
+    <div class="card-body">
+        <h4 class="mb-1">Payslip Records</h4>
+        <p class="text-muted mb-0">{{ owner_name }}</p>
+    </div>
+</div>
+
+{% if is_staff %}
+<div class="card shadow-sm border-0 mb-3">
+    <div class="card-header bg-white"><h5 class="mb-0">Generate Payslip</h5></div>
+    <div class="card-body">
+        <form method="post" class="row g-3" data-testid="payslip-form">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="generate">
+            <div class="col-md-2">
+                <select class="form-select" name="month" required>
+                    {% for m, label in month_choices %}<option value="{{ m }}">{{ label }}</option>{% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2"><input type="number" class="form-control" name="year" placeholder="Year" value="2026" required></div>
+            <div class="col-md-2"><input type="number" class="form-control" name="basic_salary" placeholder="Basic Salary" value="40000" step="0.01"></div>
+            <div class="col-md-2"><input type="number" class="form-control" name="allowances" placeholder="Allowances" value="5000" step="0.01"></div>
+            <div class="col-md-2"><input type="number" class="form-control" name="deductions" placeholder="Deductions" value="2000" step="0.01"></div>
+            <div class="col-md-2"><button class="btn btn-primary w-100" type="submit" data-testid="btn-generate-payslip">Generate</button></div>
+        </form>
+    </div>
+</div>
+{% endif %}
+
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-white"><h5 class="mb-0">Payslip History</h5></div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-sm align-middle" data-testid="payslip-table">
+                <thead class="table-dark"><tr><th>#</th>{% if not is_staff %}<th>Staff</th>{% endif %}<th>Month</th><th>Year</th><th>Basic</th><th>Allowances</th><th>Deductions</th><th>Net Pay</th><th>Status</th><th>PDF</th></tr></thead>
+                <tbody>
+                {% for p in payslips %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        {% if not is_staff %}<td>{{ p.staff.admin.first_name }} {{ p.staff.admin.last_name }}</td>{% endif %}
+                        <td>{{ p.get_month_display }}</td>
+                        <td>{{ p.year }}</td>
+                        <td>{{ p.basic_salary }}</td>
+                        <td>{{ p.allowances }}</td>
+                        <td>{{ p.deductions }}</td>
+                        <td><strong>{{ p.net_pay }}</strong></td>
+                        <td>{% if p.paid %}<span class="badge bg-success">Paid</span>{% else %}<span class="badge bg-warning text-dark">Pending</span>{% endif %}</td>
+                        <td><a class="btn btn-sm btn-outline-primary" href="{% url 'payslip_pdf' p.id %}" target="_blank" data-testid="btn-payslip-pdf-{{ p.id }}"><i class="fas fa-file-pdf me-1"></i>Download</a></td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="10" class="text-center text-muted">No payslip records yet.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}

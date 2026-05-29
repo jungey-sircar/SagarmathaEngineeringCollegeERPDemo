@@ -1,0 +1,18 @@
+{% extends 'main_app/base.html' %}
+{% block page_title %}{{ page_title }}{% endblock %}
+{% block breadcrumb %}<li class="breadcrumb-item active">{{ page_title }}</li>{% endblock %}
+{% block content %}
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-white"><h5 class="mb-0">{{ page_title }}</h5></div>
+    <div class="card-body">
+        <form method="post" class="row g-3" data-testid="kaaj-apply-form">
+            {% csrf_token %}
+            <div class="col-md-6"><label class="form-label">Purpose</label><input class="form-control" name="purpose" required></div>
+            <div class="col-md-6"><label class="form-label">Destination</label><input class="form-control" name="destination"></div>
+            <div class="col-md-3"><label class="form-label">From Date</label><input type="date" class="form-control" name="from_date" required></div>
+            <div class="col-md-3"><label class="form-label">To Date</label><input type="date" class="form-control" name="to_date" required></div>
+            <div class="col-12"><button class="btn btn-primary" type="submit" data-testid="btn-submit-kaaj">Submit Kaaj Request</button></div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,56 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff
+*.log
+local_settings.py
+db.sqlite3
+
+# Environments
+.vscode/
+.env
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Python tooling
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+
+# Documentation
+/site
+
+# Node dependencies
+node_modules/
+frontend/node_modules/
+
+# Frontend builds
+dist/
+build/
+.next/
+
+# Package logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+.env.*
+*.env
+credentials.json
+*.pem
+*.key
+.credentials

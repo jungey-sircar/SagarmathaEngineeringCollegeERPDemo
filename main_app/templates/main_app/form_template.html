@@ -1,0 +1,70 @@
+<form role="form" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="card-body">
+        <div class="mb-3 text-center">
+            <img
+                id="profile-image-preview"
+                src="data:image/gif;base64,R0lGODlhAQABAAAAACw="
+                alt="Profile Image"
+                data-current-profile-pic="{{ current_profile_pic|default:'' }}"
+                class="{% if not current_profile_pic %}d-none{% endif %}"
+                style="width: 140px; height: 140px; object-fit: cover; border-radius: 50%; border: 3px solid #dee2e6;"
+            >
+        </div>
+
+
+        {% for field in form  %}
+        <div class="form-group">
+            {{field.errors}}
+            {{field.label_tag}}
+            {{field}}
+
+        </div>
+        {% endfor %}
+
+
+
+
+    </div>
+    <!-- /.card-body -->
+
+    <div class="card-footer">
+        <button type="submit" class="btn btn-success btn-block">
+            {% if button_text %}
+            {{button_text}}
+            {% else %}
+            Submit
+            {% endif %}
+
+        </button>
+    </div>
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const fileInput = document.querySelector('input[type="file"][name="profile_pic"]');
+        const preview = document.getElementById('profile-image-preview');
+
+        if (preview) {
+            const currentProfilePic = preview.getAttribute('data-current-profile-pic');
+            if (currentProfilePic) {
+                preview.src = currentProfilePic;
+                preview.classList.remove('d-none');
+            }
+        }
+
+        if (fileInput && preview) {
+            fileInput.addEventListener('change', function () {
+                const file = this.files && this.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'inline-block';
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    });
+</script>

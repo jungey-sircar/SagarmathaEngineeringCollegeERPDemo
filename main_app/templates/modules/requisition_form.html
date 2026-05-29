@@ -1,0 +1,25 @@
+{% extends 'main_app/base.html' %}
+{% block page_title %}{{ page_title }}{% endblock %}
+{% block breadcrumb %}<li class="breadcrumb-item active">{{ page_title }}</li>{% endblock %}
+{% block content %}
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">{{ page_title }}</h5>
+        <a class="btn btn-sm btn-outline-secondary" href="{% url 'view_past_requisitions' %}" data-testid="link-past-req">View Past Requisitions</a>
+    </div>
+    <div class="card-body">
+        <form method="post" class="row g-3" data-testid="requisition-form">
+            {% csrf_token %}
+            <div class="col-md-6"><label class="form-label">Item</label>
+                <select class="form-select" name="item" required data-testid="select-req-item">
+                    <option value="">-- Select item --</option>
+                    {% for i in items %}<option value="{{ i.id }}">{{ i.name }} (stock: {{ i.quantity }} {{ i.unit }})</option>{% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3"><label class="form-label">Quantity</label><input type="number" min="1" class="form-control" name="quantity" value="1" required></div>
+            <div class="col-12"><label class="form-label">Reason</label><input class="form-control" name="reason" placeholder="Why you need this"></div>
+            <div class="col-12"><button class="btn btn-primary" type="submit" data-testid="btn-submit-requisition">Submit Requisition</button></div>
+        </form>
+    </div>
+</div>
+{% endblock %}

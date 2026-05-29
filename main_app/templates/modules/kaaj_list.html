@@ -1,0 +1,29 @@
+{% extends 'main_app/base.html' %}
+{% block page_title %}{{ page_title }}{% endblock %}
+{% block breadcrumb %}<li class="breadcrumb-item active">{{ page_title }}</li>{% endblock %}
+{% block content %}
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">{{ page_title }}</h5>
+        <a class="btn btn-sm btn-primary" href="{% url 'kaaj_apply' %}" data-testid="btn-apply-kaaj-link">+ Apply Kaaj</a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-sm align-middle" data-testid="kaaj-list-table">
+                <thead class="table-dark"><tr><th>#</th><th>Purpose</th><th>Destination</th><th>From</th><th>To</th><th>Status</th></tr></thead>
+                <tbody>
+                {% for r in rows %}
+                <tr>
+                    <td>{{ forloop.counter }}</td><td>{{ r.purpose }}</td><td>{{ r.destination|default:'-' }}</td>
+                    <td>{{ r.from_date }}</td><td>{{ r.to_date }}</td>
+                    <td>{% if r.status == 1 %}<span class="badge bg-success">Approved</span>{% elif r.status == -1 %}<span class="badge bg-danger">Rejected</span>{% else %}<span class="badge bg-warning text-dark">Pending</span>{% endif %}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="text-center text-muted">No Kaaj requests yet.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,398 @@
+{% extends 'main_app/base.html' %}
+{% load static %}
+
+{% block page_title %}Dashboard{% endblock page_title %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item active">Dashboard</li>
+{% endblock breadcrumb %}
+
+{% block custom_css %}
+<style>
+    /* High-contrast pills for the HOD top button bar */
+    .hod-topbar .btn-outline-secondary {
+        border-color: #334155;            /* slate-700 */
+        color: #1f2937;                   /* slate-800 text */
+        background: #fff;
+        font-weight: 500;
+    }
+    .hod-topbar .btn-outline-secondary:hover,
+    .hod-topbar .btn-outline-secondary:focus {
+        background-color: #1f3a68;        /* brand navy */
+        border-color: #1f3a68;
+        color: #fff;
+        box-shadow: 0 2px 6px rgba(31, 58, 104, 0.25);
+    }
+    .hod-topbar .btn-outline-secondary i { color: inherit; }
+    .hod-topbar .dropdown-menu { min-width: 220px; }
+</style>
+{% endblock custom_css %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col-12">
+        <div class="card bg-white border-0 shadow-sm">
+            <div class="card-body d-flex justify-content-between align-items-center flex-wrap py-3">
+                <div>
+                    <h3 class="mb-1 text-dark">Dashboard</h3>
+                    <p class="mb-0 text-muted">Head of Department overview for faculty coordination, approvals, and academic monitoring.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm mb-3 hod-topbar">
+    <div class="card-body py-2">
+        <div class="d-flex flex-wrap align-items-center gap-2">
+            <a href="{% url 'staff_home' %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3" data-testid="topbar-dashboard"><i class="fas fa-home me-1"></i>Dashboard</a>
+            <a href="{% url 'staff_view_profile' %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3" data-testid="topbar-profile"><i class="fas fa-user me-1"></i>Profile</a>
+            <a href="{% url 'admin_view_attendance' %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3" data-testid="topbar-attendance"><i class="fas fa-clipboard-check me-1"></i>Attendance</a>
+
+            <div class="dropdown">
+                <button class="btn btn-sm btn-outline-secondary dropdown-toggle rounded-pill px-3" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-testid="topbar-leave-kaaj">
+                    <i class="fas fa-calendar-minus me-1"></i>Leave/Kaaj
+                </button>
+                <ul class="dropdown-menu shadow-sm">
+                    <li><a class="dropdown-item" href="{% url 'staff_apply_leave' %}" data-testid="menu-apply-leave">Apply Leave</a></li>
+                    <li><a class="dropdown-item" href="{% url 'leaves_applied' %}" data-testid="menu-leaves-applied">Leaves Applied</a></li>
+                    <li><a class="dropdown-item" href="{% url 'leave_balance' %}" data-testid="menu-leave-balance">Leave Balance</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'kaaj_apply' %}" data-testid="menu-apply-kaaj">Apply Kaaj</a></li>
+                    <li><a class="dropdown-item" href="{% url 'kaaj_applied' %}" data-testid="menu-kaaj-applied">Kaaj Applied List</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'optional_holiday_apply' %}" data-testid="menu-apply-opt-holiday">Apply Optional Holiday</a></li>
+                    <li><a class="dropdown-item" href="{% url 'optional_holidays_applied' %}" data-testid="menu-opt-holidays-applied">Optional Holidays Applied</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'substitute_apply' %}" data-testid="menu-apply-substitute">Apply Substitute/Extra Days</a></li>
+                    <li><a class="dropdown-item" href="{% url 'substitutes_applied' %}" data-testid="menu-substitutes-applied">Substitutes/Extra Applied</a></li>
+                    <li><a class="dropdown-item" href="{% url 'my_substitutes' %}" data-testid="menu-my-substitutes">My Substitues/Extra Days</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'requests_waiting_for_approval' %}" data-testid="menu-approvals">Requests Waiting For Approval</a></li>
+                </ul>
+            </div>
+
+            <a href="{% url 'payslip_dashboard' %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3" data-testid="topbar-payslip"><i class="fas fa-money-bill-wave me-1"></i>Payslip</a>
+
+            <div class="dropdown">
+                <button class="btn btn-sm btn-outline-secondary dropdown-toggle rounded-pill px-3" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-testid="topbar-store">
+                    <i class="fas fa-store me-1"></i>Store
+                </button>
+                <ul class="dropdown-menu shadow-sm">
+                    <li><a class="dropdown-item" href="{% url 'requisition_form' %}" data-testid="menu-requisition-form">Requisition Form</a></li>
+                    <li><a class="dropdown-item" href="{% url 'view_past_requisitions' %}" data-testid="menu-past-requisitions">View Past Requisitions</a></li>
+                    <li><a class="dropdown-item" href="{% url 'search_store_item' %}" data-testid="menu-search-store">Search Item In Store</a></li>
+                </ul>
+            </div>
+
+            <div class="dropdown">
+                <button class="btn btn-sm btn-outline-secondary dropdown-toggle rounded-pill px-3" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-testid="topbar-library">
+                    <i class="fas fa-book me-1"></i>Library
+                </button>
+                <ul class="dropdown-menu shadow-sm">
+                    <li><a class="dropdown-item" href="{% url 'books_in_hand' %}" data-testid="menu-books-in-hand">Books In Hand</a></li>
+                    <li><a class="dropdown-item" href="{% url 'library_manage' %}" data-testid="menu-library-manage">Manage Library</a></li>
+                </ul>
+            </div>
+
+            <div class="dropdown">
+                <button class="btn btn-sm btn-outline-secondary dropdown-toggle rounded-pill px-3" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-testid="topbar-academic">
+                    <i class="fas fa-graduation-cap me-1"></i>Academic
+                </button>
+                <ul class="dropdown-menu shadow-sm">
+                    <li><a class="dropdown-item" href="{% url 'assessment_marks_entry' %}" data-testid="menu-assessment-marks">Assessment Marks Entry</a></li>
+                    <li><a class="dropdown-item" href="{% url 'study_materials' %}" data-testid="menu-study-materials">Study Materials</a></li>
+                    <li><a class="dropdown-item" href="{% url 'assignments' %}" data-testid="menu-assignments">Assignments</a></li>
+                    <li><a class="dropdown-item" href="{% url 'lesson_plans' %}" data-testid="menu-lesson-plans">Lesson/Lab Plan</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'manage_course' %}">Manage Faculties</a></li>
+                    <li><a class="dropdown-item" href="{% url 'manage_subject' %}">Manage Subjects</a></li>
+                    <li><a class="dropdown-item" href="{% url 'manage_student' %}">Manage Students</a></li>
+                </ul>
+            </div>
+
+            <div class="dropdown">
+                <button class="btn btn-sm btn-outline-secondary dropdown-toggle rounded-pill px-3" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-testid="topbar-others">
+                    <i class="fas fa-ellipsis-v me-1"></i>Others
+                </button>
+                <ul class="dropdown-menu shadow-sm">
+                    <li><a class="dropdown-item" href="{% url 'others_dashboard' %}">Overview</a></li>
+                    <li><a class="dropdown-item" href="{% url 'student_feedback_message' %}">Student Feedback</a></li>
+                    <li><a class="dropdown-item" href="{% url 'staff_feedback_message' %}">Staff Feedback</a></li>
+                    <li><a class="dropdown-item" href="{% url 'staff_view_notification' %}">Notifications</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-3 col-md-6">
+        <a href="{% url 'view_staff_leave' %}" class="text-decoration-none text-reset">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-uppercase small fw-semibold text-muted">Clearance Request</div>
+                <div class="d-flex justify-content-between align-items-start">
+                    <h2 class="mb-0 mt-2">{{ clearance_request_count|default:0 }}</h2>
+                    <i class="fas fa-file-alt text-secondary mt-2"></i>
+                </div>
+            </div>
+        </div>
+        </a>
+    </div>
+                <style>
+                    .invalid{
+                        font-style: italic;
+                        font-weight: bold;
+                        color: red;
+                    }
+                    .valid{
+                        font-style: italic;
+                        font-weight: bold;
+                        color: green;
+                    }
+                    .holidays-table td, .holidays-table th{vertical-align:middle}
+                </style>
+
+    <div class="col-lg-3 col-md-6">
+        <a href="{% url 'library_manage' %}" class="text-decoration-none text-reset" data-testid="card-library">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-uppercase small fw-semibold text-muted">Library</div>
+                <div class="d-flex justify-content-between align-items-start">
+                    <h2 class="mb-0 mt-2">{{ library_books_count|default:0 }}</h2>
+                    <i class="fas fa-book text-secondary mt-2"></i>
+                </div>
+                <div class="small text-muted">in hand</div>
+            </div>
+        </div>
+        </a>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <a href="{% url 'leave_balance' %}" class="text-decoration-none text-reset" data-testid="card-leave-balance">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-uppercase small fw-semibold text-muted">Leave Balance</div>
+                <div class="d-flex justify-content-between align-items-start">
+                    <h2 class="mb-0 mt-2">{{ leave_balance_count|default:0 }}</h2>
+                    <i class="fas fa-calendar-check text-secondary mt-2"></i>
+                </div>
+            </div>
+        </div>
+        </a>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <a href="{% url 'requests_waiting_for_approval' %}" class="text-decoration-none text-reset" data-testid="card-leave-request">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-uppercase small fw-semibold text-muted">Waiting for Your Approval</div>
+                <div class="d-flex justify-content-between align-items-start">
+                    <h2 class="mb-0 mt-2">{{ pending_leave_count|default:0 }}</h2>
+                    <i class="fas fa-inbox text-secondary mt-2"></i>
+                </div>
+                <div class="small text-muted">Leave Request pending</div>
+            </div>
+        </div>
+        </a>
+    </div>
+</div>
+
+<div class="row g-3 mt-0">
+    <div class="col-lg-3 col-md-6">
+        <a href="{% url 'optional_holidays_applied' %}" class="text-decoration-none text-reset" data-testid="card-optional-holiday">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-uppercase small fw-semibold text-muted">Waiting for Your Approval</div>
+                <div class="d-flex justify-content-between align-items-start">
+                    <h2 class="mb-0 mt-2">{{ optional_holiday_count|default:0 }}</h2>
+                    <i class="fas fa-umbrella-beach text-secondary mt-2"></i>
+                </div>
+                <div class="small text-muted">Optional Holiday</div>
+            </div>
+        </div>
+        </a>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <a href="{% url 'kaaj_applied' %}" class="text-decoration-none text-reset" data-testid="card-kaaj-tour">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-uppercase small fw-semibold text-muted">Waiting for Your Approval</div>
+                <div class="d-flex justify-content-between align-items-start">
+                    <h2 class="mb-0 mt-2">{{ kaaj_tour_count|default:0 }}</h2>
+                    <i class="fas fa-route text-secondary mt-2"></i>
+                </div>
+                <div class="small text-muted">Kaaj/Tour</div>
+            </div>
+        </div>
+        </a>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <a href="{% url 'view_past_requisitions' %}" class="text-decoration-none text-reset" data-testid="card-store-requisitions">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-uppercase small fw-semibold text-muted">Waiting for Your Approval</div>
+                <div class="d-flex justify-content-between align-items-start">
+                    <h2 class="mb-0 mt-2">{{ store_requisition_count|default:0 }}</h2>
+                    <i class="fas fa-box text-secondary mt-2"></i>
+                </div>
+                <div class="small text-muted">Store Requisitions</div>
+            </div>
+        </div>
+        </a>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <a href="{% url 'substitutes_applied' %}" class="text-decoration-none text-reset" data-testid="card-substitute">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-uppercase small fw-semibold text-muted">Waiting for Your Approval</div>
+                <div class="d-flex justify-content-between align-items-start">
+                    <h2 class="mb-0 mt-2">{{ substitute_work_day_count|default:0 }}</h2>
+                    <i class="fas fa-people-arrows text-secondary mt-2"></i>
+                </div>
+                <div class="small text-muted">Substitute/Extra Work Days</div>
+            </div>
+        </div>
+        </a>
+    </div>
+</div>
+
+<div class="row g-3 mt-0">
+    <div class="col-lg-7">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-white border-bottom-0 pb-0">
+                <h5 class="mb-0">{{ holiday_period_label|default:'Holidays' }}</h5>
+                <ul class="nav nav-tabs card-header-tabs mt-3">
+                    <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#hod-holidays">Holidays</a></li>
+                    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#hod-optional-holidays">Optional Holidays</a></li>
+                </ul>
+            </div>
+            <div class="card-body pt-3">
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="hod-holidays">
+                        <div class="table-responsive holiday-table-scroll" style="max-height: 240px; overflow: auto;">
+                            <table class="table table-sm table-bordered mb-0">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Date</th>
+                                        <th>Holiday Name</th>
+                                        <th>Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in holiday_rows %}
+                                    {% if holiday_scroll_anchor and row.from == holiday_scroll_anchor %}
+                                    <tr id="holiday-scroll-anchor" data-anchor-date="{{ holiday_scroll_anchor }}">
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ row.from }}</td>
+                                        <td>{{ row.name }}</td>
+                                        <td>{{ row.remarks }}</td>
+                                    </tr>
+                                    {% else %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ row.from }}</td>
+                                        <td>{{ row.name }}</td>
+                                        <td>{{ row.remarks }}</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted">No holiday data available.</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="hod-optional-holidays">
+                        <div class="table-responsive holiday-table-scroll" style="max-height: 240px; overflow: auto;">
+                            <table class="table table-sm table-bordered mb-0">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Date</th>
+                                        <th>Holiday Name</th>
+                                        <th>Remarks</th>
+                                        <th>Apply</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in optional_holiday_rows %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ row.from }}</td>
+                                        <td>{{ row.name }}</td>
+                                        <td>{{ row.remarks }}</td>
+                                        <td>
+                                            <a href="{% url 'staff_apply_leave' %}" class="btn btn-sm btn-outline-primary">Apply</a>
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted">No optional holidays available.</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-white border-bottom-0 pb-0">
+                <h5 class="mb-0">Announcement</h5>
+            </div>
+            <div class="card-body">
+                {% if announcement_title %}<h6>{{ announcement_title }}</h6>{% endif %}
+                {% if announcement %}
+                    <p class="mb-0">{{ announcement }}</p>
+                {% else %}
+                    <p class="text-muted mb-0">No announcements posted.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mt-0">
+    <div class="col-lg-7">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-white border-bottom-0 pb-0">
+                <h5 class="mb-0">Class Routine : {{ staff_name }} Morning</h5>
+                <ul class="nav nav-tabs card-header-tabs mt-3">
+                    {% for day, value in class_routine %}
+                        <li class="nav-item"><a class="nav-link {% if forloop.first %}active{% endif %}" href="#">{{ day }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="card-body pt-3">
+                {% with first_routine=class_routine|first %}
+                    <h6>{{ first_routine.0 }}</h6>
+                    <p class="mb-0">{{ first_routine.1 }}</p>
+                {% endwith %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block custom_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const anchor = document.querySelector('#holiday-scroll-anchor');
+        if (anchor) {
+            const scrollContainer = anchor.closest('.holiday-table-scroll');
+            if (scrollContainer) {
+                anchor.scrollIntoView({ block: 'start', inline: 'nearest' });
+            }
+        }
+    });
+</script>
+{% endblock custom_js %}
+

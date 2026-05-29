@@ -1,0 +1,98 @@
+{% extends 'main_app/base.html' %}
+{% load static %}
+{% block page_title %}{{ page_title }}{% endblock page_title %}
+{% block breadcrumb %}
+    <li class="breadcrumb-item active">{{ page_title }}</li>
+{% endblock breadcrumb %}
+{% block content %}
+<section class="content">
+    <div class="container-fluid">
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="card bg-dark text-white">
+                    <div class="card-body d-flex justify-content-between align-items-center flex-wrap">
+                        <div>
+                            <h3 class="mb-1">{{ staff_name }}</h3>
+                            <p class="mb-0">{{ role_title }} - {{ role_detail }}</p>
+                            <small>{{ department_name }}</small>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge badge-light text-dark px-3 py-2">Coordination Desk</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-4 col-6">
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>{{ total_students }}</h3>
+                        <p>Students in Scope</p>
+                    </div>
+                    <div class="icon"><i class="fas fa-user-graduate"></i></div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-6">
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>{{ total_subject }}</h3>
+                        <p>Subjects in Scope</p>
+                    </div>
+                    <div class="icon"><i class="fas fa-book"></i></div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-6">
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3>{{ total_leave }}</h3>
+                        <p>Your Leave Requests</p>
+                    </div>
+                    <div class="icon"><i class="fas fa-calendar-times"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-white">
+                        <h3 class="card-title mb-0">Coordinator Focus</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul class="mb-0">
+                            <li>Track student and staff communication</li>
+                            <li>Review pending coordination tasks</li>
+                            <li>Support department-wide planning</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-white">
+                        <h3 class="card-title mb-0">Quick Actions</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <a href="{% url 'staff_view_profile' %}" class="btn btn-secondary w-100">View Profile</a>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <a href="{% url 'staff_apply_leave' %}" class="btn btn-warning w-100">Apply Leave</a>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <a href="{% url 'staff_feedback' %}" class="btn btn-primary w-100">Send Feedback</a>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <a href="{% url 'staff_take_attendance' %}" class="btn btn-success w-100">Attendance</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}

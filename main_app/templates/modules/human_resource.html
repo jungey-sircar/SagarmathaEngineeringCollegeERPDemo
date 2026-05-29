@@ -1,0 +1,101 @@
+{% extends 'main_app/base.html' %}
+{% load static %}
+{% block page_title %}Human Resource{% endblock page_title %}
+{% block breadcrumb %}<li class="breadcrumb-item active">Human Resource</li>{% endblock breadcrumb %}
+
+{% block content %}
+<div class="row g-3 mb-3">
+    <div class="col-lg-3 col-md-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-uppercase small fw-semibold text-muted">Total Staff</div>
+                <h2 class="mb-0 mt-2" data-testid="hr-total-staff">{{ total_staff }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-uppercase small fw-semibold text-muted">Total Students</div>
+                <h2 class="mb-0 mt-2">{{ total_students }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-uppercase small fw-semibold text-muted">Departments</div>
+                <h2 class="mb-0 mt-2">{{ total_departments }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-uppercase small fw-semibold text-muted">Pending Staff Leaves</div>
+                <h2 class="mb-0 mt-2 text-warning">{{ pending_staff_leaves }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0 mb-3">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Staff Directory</h5>
+        <div class="d-flex gap-2">
+            <a href="{% url 'add_staff' %}" class="btn btn-sm btn-primary" data-testid="btn-add-staff">+ Add Staff</a>
+            <a href="{% url 'view_staff_leave' %}" class="btn btn-sm btn-outline-secondary">Leave Requests</a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-sm align-middle" data-testid="hr-staff-table">
+                <thead class="table-dark"><tr><th>#</th><th>Name</th><th>Email</th><th>Role</th><th>Department</th><th>Total Leaves</th><th>Pending</th><th>Action</th></tr></thead>
+                <tbody>
+                {% for s in staff_rows %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ s.name }}</td>
+                        <td>{{ s.email }}</td>
+                        <td>{{ s.role }}{% if s.role_detail %} - {{ s.role_detail }}{% endif %}</td>
+                        <td>{{ s.department }}</td>
+                        <td>{{ s.leave_count }}</td>
+                        <td>{% if s.pending_leaves %}<span class="badge bg-warning text-dark">{{ s.pending_leaves }}</span>{% else %}0{% endif %}</td>
+                        <td><a class="btn btn-sm btn-outline-primary" href="{% url 'edit_staff' s.id %}">Edit</a></td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="8" class="text-center text-muted">No staff yet.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-white"><h5 class="mb-0">Leave Overview</h5></div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between"><span>Staff leaves pending</span><strong class="text-warning">{{ pending_staff_leaves }}</strong></li>
+                    <li class="list-group-item d-flex justify-content-between"><span>Staff leaves approved</span><strong class="text-success">{{ approved_staff_leaves }}</strong></li>
+                    <li class="list-group-item d-flex justify-content-between"><span>Student leaves pending</span><strong class="text-warning">{{ pending_student_leaves }}</strong></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-white"><h5 class="mb-0">Quick Actions</h5></div>
+            <div class="card-body d-flex flex-column gap-2">
+                <a href="{% url 'manage_staff' %}" class="btn btn-outline-primary text-start">Manage Staff Records</a>
+                <a href="{% url 'manage_course' %}" class="btn btn-outline-primary text-start">Manage Departments</a>
+                <a href="{% url 'view_staff_leave' %}" class="btn btn-outline-primary text-start">Review Staff Leave Requests</a>
+                <a href="{% url 'view_student_leave' %}" class="btn btn-outline-primary text-start">Review Student Leave Requests</a>
+                <a href="{% url 'admin_notify_staff' %}" class="btn btn-outline-primary text-start">Send Staff Notifications</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

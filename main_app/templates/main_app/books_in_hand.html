@@ -1,0 +1,65 @@
+{% extends 'main_app/base.html' %}
+{% load static %}
+{% block page_title %}{{ page_title }}{% endblock page_title %}
+
+{% block content %}
+<section class="content">
+    <div class="container-fluid">
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="card card-dark">
+                    <div class="card-header">
+                        <h3 class="card-title mb-0">{{ page_title }}</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-1"><strong>Member:</strong> {{ display_name }}</p>
+                        <p class="mb-0"><strong>Total Books in Hand:</strong> {{ total_books_in_hand }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-dark">
+                    <div class="card-header">
+                        <h3 class="card-title">Issued Books</h3>
+                    </div>
+                    <div class="table card-body" style="overflow-x:auto; overflow-y:auto; max-height:600px;">
+                        <table class="table table-bordered table-hover" style="min-width:900px;">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Book Name</th>
+                                    <th>Author</th>
+                                    <th>ISBN</th>
+                                    <th>Issued Date</th>
+                                    <th>Expiry Date</th>
+                                    <th>Days Allowed</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in books_in_hand_rows %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ row.book_name }}</td>
+                                    <td>{{ row.author }}</td>
+                                    <td>{{ row.isbn }}</td>
+                                    <td>{{ row.issued_date }}</td>
+                                    <td>{{ row.expiry_date }}</td>
+                                    <td>{{ row.days_left }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted">No issued books found.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}

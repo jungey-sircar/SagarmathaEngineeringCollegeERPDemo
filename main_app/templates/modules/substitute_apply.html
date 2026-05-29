@@ -1,0 +1,22 @@
+{% extends 'main_app/base.html' %}
+{% block page_title %}{{ page_title }}{% endblock %}
+{% block breadcrumb %}<li class="breadcrumb-item active">{{ page_title }}</li>{% endblock %}
+{% block content %}
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-white"><h5 class="mb-0">{{ page_title }}</h5></div>
+    <div class="card-body">
+        <form method="post" class="row g-3" data-testid="substitute-apply-form">
+            {% csrf_token %}
+            <div class="col-md-6"><label class="form-label">Substitute For</label>
+                <select class="form-select" name="substitute_for">
+                    <option value="">-- Select staff (optional) --</option>
+                    {% for s in staff_options %}<option value="{{ s.id }}">{{ s.admin.first_name }} {{ s.admin.last_name }}</option>{% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3"><label class="form-label">Work Date</label><input type="date" class="form-control" name="work_date" required></div>
+            <div class="col-12"><label class="form-label">Description</label><input class="form-control" name="description" required></div>
+            <div class="col-12"><button class="btn btn-primary" type="submit" data-testid="btn-submit-substitute">Submit</button></div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,156 @@
+{% extends 'main_app/base.html' %}
+{% load static %}
+{% block page_title %}Admissions{% endblock page_title %}
+{% block breadcrumb %}<li class="breadcrumb-item active">Admissions</li>{% endblock breadcrumb %}
+
+{% block content %}
+<div class="row g-3 mb-3">
+    <div class="col-lg-3 col-md-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-uppercase small fw-semibold text-muted">Total Admissions</div>
+                <h2 class="mb-0 mt-2" data-testid="admissions-total">{{ total_admissions }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-uppercase small fw-semibold text-muted">Approved</div>
+                <h2 class="mb-0 mt-2 text-success">{{ approved_count }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-uppercase small fw-semibold text-muted">Pending</div>
+                <h2 class="mb-0 mt-2 text-warning">{{ pending_count }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-uppercase small fw-semibold text-muted">Enrolled Students</div>
+                <h2 class="mb-0 mt-2">{{ students|length }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0 mb-3">
+    <div class="card-header bg-white"><h5 class="mb-0">Record a New Admission</h5></div>
+    <div class="card-body">
+        <form method="post" class="row g-3" data-testid="admissions-form">
+            {% csrf_token %}
+            <div class="col-md-4"><input class="form-control" name="candidate_name" placeholder="Candidate Name" required></div>
+            <div class="col-md-3"><input type="email" class="form-control" name="email" placeholder="Email" required></div>
+            <div class="col-md-2"><input class="form-control" name="phone" placeholder="Phone"></div>
+            <div class="col-md-3">
+                <select class="form-select" name="course">
+                    <option value="">-- Course --</option>
+                    {% for c in courses %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select class="form-select" name="status">
+                    <option value="approved" selected>Approved</option>
+                    <option value="pending">Pending</option>
+                </select>
+            </div>
+            <div class="col-12"><textarea class="form-control" name="notes" rows="2" placeholder="Notes"></textarea></div>
+            <div class="col-12"><button class="btn btn-primary" type="submit" data-testid="btn-add-admission">Save Admission</button></div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0 mb-3">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Admission Records</h5>
+        <button type="submit" form="bulk-promote-form" class="btn btn-sm btn-success" data-testid="btn-bulk-promote" onclick="return confirm('Promote all selected admissions to Student?');">
+            <i class="fas fa-user-graduate me-1"></i>Promote Selected to Students
+        </button>
+    </div>
+    <div class="card-body">
+        <form id="bulk-promote-form" method="post" action="{% url 'bulk_promote_admissions' %}">{% csrf_token %}</form>
+        <div class="table-responsive">
+            <table class="table table-sm table-bordered align-middle" data-testid="admissions-table">
+                <thead class="table-dark">
+                    <tr>
+                        <th style="width: 32px;"><input type="checkbox" id="select-all" data-testid="checkbox-select-all"></th>
+                        <th>#</th><th>Name</th><th>Email</th><th>Course</th><th>Status</th><th>Applied</th><th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for row in admissions %}
+                    <tr>
+                        <td><input type="checkbox" form="bulk-promote-form" name="ids" value="{{ row.id }}" class="bulk-check" data-testid="checkbox-adm-{{ row.id }}"></td>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ row.candidate_name }}</td>
+                        <td>{{ row.email }}</td>
+                        <td>{{ row.course.name|default:'-' }}</td>
+                        <td>
+                            {% if row.status == 'approved' %}<span class="badge bg-success">Approved</span>
+                            {% elif row.status == 'rejected' %}<span class="badge bg-danger">Rejected</span>
+                            {% else %}<span class="badge bg-warning text-dark">Pending</span>{% endif %}
+                        </td>
+                        <td>{{ row.applied_at }}</td>
+                        <td>
+                            <form method="post" action="{% url 'promote_admission' row.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-success" data-testid="btn-promote-student-{{ row.id }}" title="One-click: create CustomUser + Student profile + email temp password">Promote to Student</button>
+                            </form>
+                            <form method="post" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="id" value="{{ row.id }}">
+                                <button name="action" value="delete" class="btn btn-sm btn-outline-danger" data-testid="btn-delete-adm-{{ row.id }}">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="8" class="text-center text-muted">No admissions yet.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const all = document.getElementById('select-all');
+        if (!all) return;
+        all.addEventListener('change', () => {
+            document.querySelectorAll('.bulk-check').forEach(cb => { cb.checked = all.checked; });
+        });
+    })();
+</script>
+
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Enrolled Students</h5>
+        <a class="btn btn-sm btn-outline-primary" href="{% url 'add_student' %}" data-testid="btn-add-student">Add Student</a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-sm align-middle">
+                <thead class="table-dark"><tr><th>#</th><th>Name</th><th>Email</th><th>Course</th><th>Session</th></tr></thead>
+                <tbody>
+                {% for s in students %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ s.admin.first_name }} {{ s.admin.last_name }}</td>
+                        <td>{{ s.admin.email }}</td>
+                        <td>{{ s.course.name|default:'-' }}</td>
+                        <td>{{ s.session|default:'-' }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="5" class="text-center text-muted">No students enrolled yet.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}

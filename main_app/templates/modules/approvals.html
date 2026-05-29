@@ -1,0 +1,82 @@
+{% extends 'main_app/base.html' %}
+{% block page_title %}{{ page_title }}{% endblock %}
+{% block breadcrumb %}<li class="breadcrumb-item active">{{ page_title }}</li>{% endblock %}
+{% block content %}
+<div class="card shadow-sm border-0 mb-3">
+    <div class="card-header bg-white"><h5 class="mb-0">Pending Leave Requests ({{ leave_rows|length }})</h5></div>
+    <div class="card-body">
+        <table class="table table-sm align-middle" data-testid="approvals-leave-table">
+            <thead class="table-dark"><tr><th>#</th><th>Staff</th><th>Date</th><th>Message</th><th>Action</th></tr></thead>
+            <tbody>
+            {% for r in leave_rows %}
+            <tr><td>{{ forloop.counter }}</td><td>{{ r.staff.admin.first_name }} {{ r.staff.admin.last_name }}</td><td>{{ r.date }}</td><td>{{ r.message }}</td>
+            <td>
+                <form method="post" class="d-inline">{% csrf_token %}
+                    <input type="hidden" name="kind" value="leave"><input type="hidden" name="id" value="{{ r.id }}">
+                    <button name="action" value="approve" class="btn btn-sm btn-success" data-testid="btn-approve-leave-{{ r.id }}">Approve</button>
+                    <button name="action" value="reject" class="btn btn-sm btn-outline-danger" data-testid="btn-reject-leave-{{ r.id }}">Reject</button>
+                </form>
+            </td></tr>
+            {% empty %}<tr><td colspan="5" class="text-center text-muted">No pending leave.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0 mb-3">
+    <div class="card-header bg-white"><h5 class="mb-0">Pending Kaaj/Tour ({{ kaaj_rows|length }})</h5></div>
+    <div class="card-body">
+        <table class="table table-sm align-middle" data-testid="approvals-kaaj-table">
+            <thead class="table-dark"><tr><th>#</th><th>Staff</th><th>Purpose</th><th>From</th><th>To</th><th>Action</th></tr></thead>
+            <tbody>
+            {% for r in kaaj_rows %}
+            <tr><td>{{ forloop.counter }}</td><td>{{ r.staff.admin.first_name }}</td><td>{{ r.purpose }}</td><td>{{ r.from_date }}</td><td>{{ r.to_date }}</td>
+            <td><form method="post" class="d-inline">{% csrf_token %}
+                <input type="hidden" name="kind" value="kaaj"><input type="hidden" name="id" value="{{ r.id }}">
+                <button name="action" value="approve" class="btn btn-sm btn-success" data-testid="btn-approve-kaaj-{{ r.id }}">Approve</button>
+                <button name="action" value="reject" class="btn btn-sm btn-outline-danger">Reject</button>
+            </form></td></tr>
+            {% empty %}<tr><td colspan="6" class="text-center text-muted">No pending Kaaj.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0 mb-3">
+    <div class="card-header bg-white"><h5 class="mb-0">Pending Optional Holidays ({{ optional_holiday_rows|length }})</h5></div>
+    <div class="card-body">
+        <table class="table table-sm align-middle">
+            <thead class="table-dark"><tr><th>#</th><th>Staff</th><th>Holiday</th><th>Date</th><th>Action</th></tr></thead>
+            <tbody>
+            {% for r in optional_holiday_rows %}
+            <tr><td>{{ forloop.counter }}</td><td>{{ r.staff.admin.first_name }}</td><td>{{ r.holiday_name }}</td><td>{{ r.holiday_date }}</td>
+            <td><form method="post" class="d-inline">{% csrf_token %}
+                <input type="hidden" name="kind" value="optional_holiday"><input type="hidden" name="id" value="{{ r.id }}">
+                <button name="action" value="approve" class="btn btn-sm btn-success">Approve</button>
+                <button name="action" value="reject" class="btn btn-sm btn-outline-danger">Reject</button>
+            </form></td></tr>
+            {% empty %}<tr><td colspan="5" class="text-center text-muted">No pending optional holidays.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-white"><h5 class="mb-0">Pending Substitute / Extra Days ({{ substitute_rows|length }})</h5></div>
+    <div class="card-body">
+        <table class="table table-sm align-middle">
+            <thead class="table-dark"><tr><th>#</th><th>Staff</th><th>Description</th><th>Date</th><th>Action</th></tr></thead>
+            <tbody>
+            {% for r in substitute_rows %}
+            <tr><td>{{ forloop.counter }}</td><td>{{ r.staff.admin.first_name }}</td><td>{{ r.description }}</td><td>{{ r.work_date }}</td>
+            <td><form method="post" class="d-inline">{% csrf_token %}
+                <input type="hidden" name="kind" value="substitute"><input type="hidden" name="id" value="{{ r.id }}">
+                <button name="action" value="approve" class="btn btn-sm btn-success">Approve</button>
+                <button name="action" value="reject" class="btn btn-sm btn-outline-danger">Reject</button>
+            </form></td></tr>
+            {% empty %}<tr><td colspan="5" class="text-center text-muted">No pending substitute requests.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'main_app/base.html' %}
+{% load static %}
+{% block page_title %}Store Requisitions{% endblock page_title %}
+{% block breadcrumb %}<li class="breadcrumb-item active">Store</li>{% endblock breadcrumb %}
+
+{% block content %}
+<div class="row g-3 mb-3">
+    <div class="col-lg-4 col-md-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-uppercase small fw-semibold text-muted">Active Requisitions</div>
+                <h2 class="mb-0 mt-2 text-warning" data-testid="store-requisition-count">{{ requisition_count }}</h2>
+                <div class="small text-muted">Low-stock items needing replenishment</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-uppercase small fw-semibold text-muted">Total Items in Store</div>
+                <h2 class="mb-0 mt-2">{{ total_items }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body d-flex flex-column h-100">
+                <div class="text-uppercase small fw-semibold text-muted mb-2">Quick Action</div>
+                <a href="{% url 'inventory' %}" class="btn btn-primary mt-auto" data-testid="btn-go-inventory">Go to Inventory</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-white"><h5 class="mb-0">Items Below Reorder Level</h5></div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-sm align-middle" data-testid="store-table">
+                <thead class="table-dark"><tr><th>#</th><th>Item</th><th>Category</th><th>Current Qty</th><th>Reorder Level</th><th>Location</th></tr></thead>
+                <tbody>
+                {% for i in requisitions %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ i.name }}</td>
+                        <td>{{ i.category }}</td>
+                        <td class="text-danger fw-semibold">{{ i.quantity }} {{ i.unit }}</td>
+                        <td>{{ i.reorder_level }} {{ i.unit }}</td>
+                        <td>{{ i.location|default:'-' }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="6" class="text-center text-muted">No store requisitions. All stock is healthy.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}

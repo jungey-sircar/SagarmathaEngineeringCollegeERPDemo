@@ -1,0 +1,108 @@
+{% extends 'main_app/base.html' %}
+{% load static %}
+{% block page_title %}Examination{% endblock page_title %}
+{% block breadcrumb %}<li class="breadcrumb-item active">Examination</li>{% endblock breadcrumb %}
+
+{% block content %}
+<div class="row g-3 mb-3">
+    <div class="col-lg-3 col-md-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-uppercase small fw-semibold text-muted">Total Exams</div>
+                <h2 class="mb-0 mt-2" data-testid="exam-total">{{ exams|length }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-uppercase small fw-semibold text-muted">Scheduled</div>
+                <h2 class="mb-0 mt-2 text-primary">{{ scheduled_count }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-uppercase small fw-semibold text-muted">Ongoing</div>
+                <h2 class="mb-0 mt-2 text-warning">{{ ongoing_count }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-uppercase small fw-semibold text-muted">Completed</div>
+                <h2 class="mb-0 mt-2 text-success">{{ completed_count }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0 mb-3">
+    <div class="card-header bg-white"><h5 class="mb-0">Schedule a New Exam</h5></div>
+    <div class="card-body">
+        <form method="post" class="row g-3" data-testid="exam-form">
+            {% csrf_token %}
+            <div class="col-md-4"><input class="form-control" name="name" placeholder="Exam Name (e.g. Mid-Term)" required></div>
+            <div class="col-md-3">
+                <select class="form-select" name="subject" required>
+                    <option value="">-- Subject --</option>
+                    {% for s in subjects %}<option value="{{ s.id }}">{{ s.name }} ({{ s.course.name }})</option>{% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2"><input type="date" class="form-control" name="exam_date" required></div>
+            <div class="col-md-1"><input type="number" class="form-control" name="total_marks" placeholder="Marks" value="100"></div>
+            <div class="col-md-1"><input type="number" class="form-control" name="duration_minutes" placeholder="Min" value="180"></div>
+            <div class="col-md-1">
+                <select class="form-select" name="status">
+                    <option value="scheduled">Scheduled</option>
+                    <option value="ongoing">Ongoing</option>
+                    <option value="completed">Completed</option>
+                </select>
+            </div>
+            <div class="col-12"><button class="btn btn-primary" type="submit" data-testid="btn-schedule-exam">Schedule Exam</button></div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-white"><h5 class="mb-0">Examination Schedule</h5></div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-sm table-bordered align-middle" data-testid="exam-table">
+                <thead class="table-dark">
+                    <tr><th>#</th><th>Exam</th><th>Subject</th><th>Course</th><th>Date</th><th>Marks</th><th>Duration</th><th>Status</th><th>Action</th></tr>
+                </thead>
+                <tbody>
+                {% for e in exams %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ e.name }}</td>
+                        <td>{{ e.subject.name }}</td>
+                        <td>{{ e.subject.course.name }}</td>
+                        <td>{{ e.exam_date }}</td>
+                        <td>{{ e.total_marks }}</td>
+                        <td>{{ e.duration_minutes }} min</td>
+                        <td>
+                            {% if e.status == 'scheduled' %}<span class="badge bg-primary">Scheduled</span>
+                            {% elif e.status == 'ongoing' %}<span class="badge bg-warning text-dark">Ongoing</span>
+                            {% else %}<span class="badge bg-success">Completed</span>{% endif %}
+                        </td>
+                        <td>
+                            <form method="post" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="id" value="{{ e.id }}">
+                                <button name="action" value="delete" class="btn btn-sm btn-outline-danger" data-testid="btn-delete-exam-{{ e.id }}">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="9" class="text-center text-muted">No exams scheduled yet.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}

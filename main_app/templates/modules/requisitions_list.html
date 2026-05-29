@@ -1,0 +1,50 @@
+{% extends 'main_app/base.html' %}
+{% block page_title %}{{ page_title }}{% endblock %}
+{% block breadcrumb %}<li class="breadcrumb-item active">{{ page_title }}</li>{% endblock %}
+{% block content %}
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">{{ page_title }}</h5>
+        <a class="btn btn-sm btn-primary" href="{% url 'requisition_form' %}" data-testid="btn-new-requisition">+ New Requisition</a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-sm align-middle" data-testid="requisitions-table">
+                <thead class="table-dark"><tr><th>#</th><th>Requested By</th><th>Item</th><th>Qty</th><th>Reason</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
+                <tbody>
+                {% for r in rows %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ r.requested_by.admin.first_name }} {{ r.requested_by.admin.last_name }}</td>
+                    <td>{{ r.item.name }}</td>
+                    <td>{{ r.quantity }}</td>
+                    <td>{{ r.reason|default:'-' }}</td>
+                    <td>
+                        {% if r.status == 1 %}<span class="badge bg-primary">Approved</span>
+                        {% elif r.status == 2 %}<span class="badge bg-success">Fulfilled</span>
+                        {% elif r.status == -1 %}<span class="badge bg-danger">Rejected</span>
+                        {% else %}<span class="badge bg-warning text-dark">Requested</span>{% endif %}
+                    </td>
+                    <td>{{ r.created_at|date:"Y-m-d" }}</td>
+                    <td>
+                        <form method="post" class="d-inline">
+                            {% csrf_token %}<input type="hidden" name="id" value="{{ r.id }}">
+                            {% if r.status == 0 %}
+                                <button name="action" value="approve" class="btn btn-sm btn-success" data-testid="btn-req-approve-{{ r.id }}">Approve</button>
+                                <button name="action" value="reject" class="btn btn-sm btn-outline-danger" data-testid="btn-req-reject-{{ r.id }}">Reject</button>
+                            {% elif r.status == 1 %}
+                                <button name="action" value="fulfil" class="btn btn-sm btn-primary" data-testid="btn-req-fulfil-{{ r.id }}">Mark Fulfilled</button>
+                            {% endif %}
+                            <button name="action" value="delete" class="btn btn-sm btn-outline-secondary" data-testid="btn-req-delete-{{ r.id }}">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="8" class="text-center text-muted">No requisitions yet.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

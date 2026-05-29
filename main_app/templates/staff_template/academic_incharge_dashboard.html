@@ -1,0 +1,151 @@
+{% extends 'main_app/base.html' %}
+{% load static %}
+
+{% block page_title %}{{ page_title }}{% endblock page_title %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item active">{{ page_title }}</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+<section class="content">
+    <div class="container-fluid">
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #17324d, #0f5c8a); color: #fff;">
+                    <div class="card-body d-flex justify-content-between align-items-center flex-wrap">
+                        <div>
+                            <div class="text-uppercase small opacity-75 mb-1">Academic Incharge</div>
+                            <h3 class="mb-1">{{ staff_name }}</h3>
+                            <p class="mb-1">{{ role_title }}{% if role_detail %} - {{ role_detail }}{% endif %}</p>
+                            <small>{{ department_name }}</small>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge badge-light text-dark px-3 py-2">Academic Control Center</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>{{ total_students }}</h3>
+                        <p>Students Covered</p>
+                    </div>
+                    <div class="icon"><i class="fas fa-user-graduate"></i></div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>{{ total_subject }}</h3>
+                        <p>Subjects Monitored</p>
+                    </div>
+                    <div class="icon"><i class="fas fa-book-open"></i></div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3>{{ total_staff }}</h3>
+                        <p>Faculty in Scope</p>
+                    </div>
+                    <div class="icon"><i class="fas fa-user-tie"></i></div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        <h3>{{ total_leave }}</h3>
+                        <p>Your Leave Requests</p>
+                    </div>
+                    <div class="icon"><i class="fas fa-calendar-times"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-7">
+                <div class="card">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h3 class="card-title mb-0">Academic Priorities</h3>
+                        <span class="badge badge-primary">Current Cycle</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            {% for item in academic_focus %}
+                                <div class="col-md-4 mb-3">
+                                    <div class="border rounded p-3 h-100 bg-light">
+                                        <div class="font-weight-bold mb-2">Priority {{ forloop.counter }}</div>
+                                        <div class="text-muted small">{{ item }}</div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-3">
+                    <div class="card-header bg-white">
+                        <h3 class="card-title mb-0">Subject Coverage</h3>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-striped mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Subject</th>
+                                        <th class="text-right">Attendance Count</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in subject_rows %}
+                                        <tr>
+                                            <td>{{ row.name }}</td>
+                                            <td class="text-right">{{ row.attendance }}</td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="2" class="text-center text-muted py-4">No subject data available</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-5">
+                <div class="card">
+                    <div class="card-header bg-white">
+                        <h3 class="card-title mb-0">Academic Actions</h3>
+                    </div>
+                    <div class="card-body">
+                        <a href="{% url 'staff_view_profile' %}" class="btn btn-dark btn-block mb-2">View Profile</a>
+                        <a href="{% url 'staff_apply_leave' %}" class="btn btn-warning btn-block mb-2">Apply Leave</a>
+                        <a href="{% url 'staff_feedback' %}" class="btn btn-primary btn-block mb-2">Send Feedback</a>
+                        <a href="{% url 'staff_take_attendance' %}" class="btn btn-success btn-block">Take Attendance</a>
+                    </div>
+                </div>
+
+                <div class="card mt-3">
+                    <div class="card-header bg-white">
+                        <h3 class="card-title mb-0">Snapshot</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul class="mb-0">
+                            <li>Track faculty load and student coverage</li>
+                            <li>Review course-level academic activity</li>
+                            <li>Keep attendance and leave flow aligned</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}

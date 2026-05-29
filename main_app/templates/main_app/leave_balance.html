@@ -1,0 +1,96 @@
+{% extends 'main_app/base.html' %}
+{% load static %}
+{% block page_title %}{{ page_title }}{% endblock page_title %}
+
+{% block content %}
+<section class="content">
+    <div class="container-fluid">
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="card card-dark">
+                    <div class="card-header">
+                        <h3 class="card-title mb-0">{{ page_title }}</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-1"><strong>Member:</strong> {{ owner_name }}</p>
+                        <p class="mb-0 text-muted">A live summary of leave requests and their current approval status.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4 mb-3">
+                <div class="card card-dark h-100">
+                    <div class="card-body">
+                        <h5 class="mb-1">Approved</h5>
+                        <h2 class="mb-0 text-success">{{ approved_count }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card card-dark h-100">
+                    <div class="card-body">
+                        <h5 class="mb-1">Pending</h5>
+                        <h2 class="mb-0 text-warning">{{ pending_count }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card card-dark h-100">
+                    <div class="card-body">
+                        <h5 class="mb-1">Rejected</h5>
+                        <h2 class="mb-0 text-danger">{{ rejected_count }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-dark">
+                    <div class="card-header">
+                        <h3 class="card-title">Leave Balance / History</h3>
+                    </div>
+                    <div class="table card-body" style="overflow-x:auto; overflow-y:auto; max-height:600px;">
+                        <table class="table table-bordered table-hover" style="min-width:800px;">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Date</th>
+                                    <th>Message</th>
+                                    <th>Status</th>
+                                    <th>Submitted On</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in leave_rows %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ row.date }}</td>
+                                    <td style="word-wrap: break-word; max-width: 260px; overflow: hidden; text-overflow: ellipsis;">{{ row.message }}</td>
+                                    <td>
+                                        {% if row.status == 0 %}
+                                            <span class="badge badge-warning">Pending</span>
+                                        {% elif row.status == 1 %}
+                                            <span class="badge badge-success">Approved</span>
+                                        {% else %}
+                                            <span class="badge badge-danger">Rejected</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ row.submitted_on }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted">No leave requests found.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}

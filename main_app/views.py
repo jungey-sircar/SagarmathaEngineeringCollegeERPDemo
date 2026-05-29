@@ -126,7 +126,7 @@ def showFirebaseJS(request):
     # Embed the FIREBASE_CONFIG from Django settings into service worker JS
     firebase_config = getattr(settings, "FIREBASE_CONFIG", {}) or {}
     config_json = json.dumps(firebase_config)
-    data = f"""
+    data = """
     // Give the service worker access to Firebase Messaging.
 // Note that you can only use Firebase Messaging here, other Firebase libraries
 // are not available in the service worker.
